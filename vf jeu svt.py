@@ -2110,19 +2110,19 @@ class JeuPetitDej:
         self.ecran.blit(nom_per, nom_per.get_rect(center=(cx_per, cy_per + 52)))
 
         # ── Boutons ───────────────────────────────────────────────────────────
-        btn_bou = pygame.Rect(cx_bou - 95, cy_bou + 75, 190, 46)
-        btn_per = pygame.Rect(cx_per - 95, cy_per + 75, 190, 46)
+        btn_bou = pygame.Rect(cx_bou - 110, cy_bou + 75, 220, 46)
+        btn_per = pygame.Rect(cx_per - 110, cy_per + 75, 220, 46)
         h_bou   = btn_bou.collidepoint(souris)
         h_per   = btn_per.collidepoint(souris)
 
         pygame.draw.rect(self.ecran, OR if h_bou else (130, 90, 0),  btn_bou, border_radius=12)
         pygame.draw.rect(self.ecran, BLANC, btn_bou, 2, border_radius=12)
-        t_bou = self.fonte_sous_titre.render("Boutique", True, NOIR if h_bou else BLANC)
+        t_bou = self.fonte_texte.render("Boutique", True, NOIR if h_bou else BLANC)
         self.ecran.blit(t_bou, t_bou.get_rect(center=btn_bou.center))
 
         pygame.draw.rect(self.ecran, ROSE_PASS if h_per else (130, 20, 100), btn_per, border_radius=12)
         pygame.draw.rect(self.ecran, BLANC, btn_per, 2, border_radius=12)
-        t_per2 = self.fonte_sous_titre.render("Personnalisation", True, NOIR if h_per else BLANC)
+        t_per2 = self.fonte_texte.render("Personnalisation", True, NOIR if h_per else BLANC)
         self.ecran.blit(t_per2, t_per2.get_rect(center=btn_per.center))
 
         # ── Bouton Retour ─────────────────────────────────────────────────────
@@ -2355,25 +2355,6 @@ class JeuPetitDej:
         t_per = self.fonte_sous_titre.render("PERSO ->", True, BLANC)
         self.ecran.blit(t_per, t_per.get_rect(center=btn_perso.center))
 
-        # PASS ROYAL (bouton centré en bas)
-        btn_pass = pygame.Rect(cx - 160, 664, 320, 52)
-        h_pass = btn_pass.collidepoint(souris)
-        pygame.draw.rect(self.ecran, VIOLET_PASS if h_pass else (60, 20, 120), btn_pass, border_radius=12)
-        pygame.draw.rect(self.ecran, (200, 150, 255), btn_pass, 3, border_radius=12)
-        # Étoile animée
-        pulse_acc = int(4 * abs(math.sin(now / 350)))
-        pygame.draw.rect(self.ecran, VIOLET_PASS,
-                         btn_pass.inflate(pulse_acc*2, pulse_acc*2), border_radius=14)
-        pygame.draw.rect(self.ecran, VIOLET_PASS if h_pass else (60, 20, 120), btn_pass, border_radius=12)
-        pygame.draw.rect(self.ecran, (200, 150, 255), btn_pass, 3, border_radius=12)
-        surf_pass = self.fonte_sous_titre.render("* PASS ROYAL *", True, (220, 180, 255))
-        self.ecran.blit(surf_pass, surf_pass.get_rect(center=btn_pass.center))
-        # Mini barre XP sous le bouton
-        pass_niv_acc = self.boutique.get("pass_niveau", 0)
-        pass_xp_acc  = self.boutique.get("pass_xp", 0)
-        xp_label = self.fonte_petite.render(f"Palier {pass_niv_acc}/{len(PASS_TIERS)}  |  {pass_xp_acc} XP", True, (160, 120, 220))
-        self.ecran.blit(xp_label, xp_label.get_rect(center=(cx, 726)))
-
         # Affichage pieces totales (grand, avec icone pièce)
         pieces_val = self.boutique['pieces']
         p_box_w, p_box_h = 260, 52
@@ -2387,6 +2368,51 @@ class JeuPetitDej:
         pygame.draw.circle(self.ecran, (255, 255, 200),(p_box_x + 23, p_box_y + 21),  5)
         pieces_surf = self.fonte_sous_titre.render(f"{pieces_val}", True, OR)
         self.ecran.blit(pieces_surf, pieces_surf.get_rect(midleft=(p_box_x + 52, p_box_y + 26)))
+
+        # Info XP / Palier sous la boite de pièces (plus grand, bien visible)
+        pass_niv_acc = self.boutique.get("pass_niveau", 0)
+        pass_xp_acc  = self.boutique.get("pass_xp", 0)
+        xp_box_y = p_box_y + p_box_h + 6
+        pygame.draw.rect(self.ecran, (25, 10, 50),
+                         (p_box_x, xp_box_y, p_box_w, 30), border_radius=10)
+        pygame.draw.rect(self.ecran, (120, 80, 200),
+                         (p_box_x, xp_box_y, p_box_w, 30), 2, border_radius=10)
+        xp_label = self.fonte_texte.render(
+            f"Palier {pass_niv_acc}/{len(PASS_TIERS)}  |  {pass_xp_acc} XP", True, (210, 170, 255))
+        self.ecran.blit(xp_label, xp_label.get_rect(center=(p_box_x + p_box_w // 2, xp_box_y + 15)))
+
+        # PASS ROYAL (bouton centré en bas)
+        btn_pass = pygame.Rect(cx - 160, 664, 320, 52)
+        h_pass = btn_pass.collidepoint(souris)
+        # Notification récompenses disponibles
+        pass_dispo_acc = self.boutique.get("pass_recompenses_disponibles", [])
+        nb_dispo_acc   = len(pass_dispo_acc)
+        pulse_acc = int(4 * abs(math.sin(now / 350)))
+        # Halo pulsant rouge si récompenses en attente
+        if nb_dispo_acc > 0:
+            pulse_notif = int(6 * abs(math.sin(now / 250)))
+            pygame.draw.rect(self.ecran, (200, 50, 50),
+                             btn_pass.inflate(pulse_notif * 2 + 4, pulse_notif * 2 + 4), border_radius=16)
+        else:
+            pygame.draw.rect(self.ecran, VIOLET_PASS,
+                             btn_pass.inflate(pulse_acc * 2, pulse_acc * 2), border_radius=14)
+        pygame.draw.rect(self.ecran, VIOLET_PASS if h_pass else (60, 20, 120), btn_pass, border_radius=12)
+        pygame.draw.rect(self.ecran, (200, 150, 255), btn_pass, 3, border_radius=12)
+        surf_pass = self.fonte_sous_titre.render("* PASS ROYAL *", True, (220, 180, 255))
+        self.ecran.blit(surf_pass, surf_pass.get_rect(center=btn_pass.center))
+        # Badge notification (pastille rouge en haut à droite du bouton)
+        if nb_dispo_acc > 0:
+            badge_cx = btn_pass.right - 10
+            badge_cy = btn_pass.top - 10
+            badge_r  = 14 + int(2 * abs(math.sin(now / 200)))
+            pygame.draw.circle(self.ecran, (200, 30, 30), (badge_cx, badge_cy), badge_r)
+            pygame.draw.circle(self.ecran, (255, 100, 100), (badge_cx, badge_cy), badge_r, 2)
+            nb_surf = self.fonte_petite.render(str(nb_dispo_acc), True, BLANC)
+            self.ecran.blit(nb_surf, nb_surf.get_rect(center=(badge_cx, badge_cy)))
+            # Texte sous le bouton
+            notif_pass = self.fonte_petite.render(
+                f"{nb_dispo_acc} recompense(s) a reclamer !", True, (255, 150, 150))
+            self.ecran.blit(notif_pass, notif_pass.get_rect(center=(cx, btn_pass.bottom + 14)))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -2742,31 +2768,115 @@ class JeuPetitDej:
         return True
 
     def scene_resultats(self):
-        self.ecran.fill((240,240,245))
+        import math as _m
+
         score_total = self.score_energie + self.score_sante
-        # Utilise le temps fige a la fin de la partie
         t = self.temps_fin if self.temps_fin > 0 else self._temps_ecoule()
 
+        # ── Résultat et adaptation ────────────────────────────────────────────
         if self.defaite_pieges:
-            couleur, titre, eval_ = ROUGE_FLUO,"DEFAITE !",        "3 PIEGES ATTRAPES"
+            couleur, titre = ROUGE_FLUO, "DEFAITE !"
+            sous_titre = "Tu as attrape 3 pieges..."
+            bon_ptdej = False
         elif self.defaite_manques:
-            couleur, titre, eval_ = ROUGE_FLUO,"DEFAITE !",        "5 BONS ALIMENTS RATES"
+            couleur, titre = ROUGE_FLUO, "DEFAITE !"
+            sous_titre = "Tu as rate 5 bons aliments..."
+            bon_ptdej = False
         elif score_total >= 200:
-            couleur, titre, eval_ = VERT,      "CHAMPION !",       "EXCELLENT"
+            couleur, titre = VERT, "CHAMPION !"
+            sous_titre = "Ton petit-dejeuner t\'a tenu jusqu\'a midi !"
+            bon_ptdej = True
         elif score_total >= 150:
-            couleur, titre, eval_ = (34,139,34),"EXCELLENT !",     "TRES BON"
+            couleur, titre = (34, 139, 34), "EXCELLENT !"
+            sous_titre = "Ton petit-dejeuner t\'a tenu jusqu\'a midi !"
+            bon_ptdej = True
         elif score_total >= 100:
-            couleur, titre, eval_ = ORANGE,    "BIEN !",           "BON"
+            couleur, titre = ORANGE, "BIEN !"
+            sous_titre = "Bon debut, mais tu peux encore mieux faire !"
+            bon_ptdej = True
         else:
-            couleur, titre, eval_ = ROUGE,     "ATTENTION !",      "INSUFFISANT"
+            couleur, titre = ROUGE, "ATTENTION !"
+            sous_titre = "Ton petit-dejeuner n\'etait pas assez equilibre."
+            bon_ptdej = False
 
-        pygame.draw.rect(self.ecran, couleur, (0,0,LARGEUR,145))
-        for txt, cy in [(titre, 55), (eval_, 105)]:
-            surf = (self.fonte_titre if cy==55 else self.fonte_sous_titre).render(txt, True, BLANC)
-            self.ecran.blit(surf, surf.get_rect(center=(LARGEUR//2, cy)))
+        # ── Helper word-wrap ─────────────────────────────────────────────────
+        def wrap_text(font, text, max_w):
+            mots = text.split()
+            lignes, cur = [], ""
+            for mot in mots:
+                cand = (cur + " " + mot).strip()
+                if font.size(cand)[0] <= max_w:
+                    cur = cand
+                else:
+                    if cur:
+                        lignes.append(cur)
+                    cur = mot
+            if cur:
+                lignes.append(cur)
+            return lignes
 
-        # Score + temps survecu
-        y = 175
+        # ── FOND dégradé ─────────────────────────────────────────────────────
+        if bon_ptdej:
+            top_c, bot_c = (18, 30, 55), (28, 48, 80)
+        else:
+            top_c, bot_c = (45, 12, 12), (28, 8, 8)
+        for i in range(HAUTEUR):
+            r2 = i / HAUTEUR
+            c = tuple(int(top_c[k] + (bot_c[k] - top_c[k]) * r2) for k in range(3))
+            pygame.draw.line(self.ecran, c, (0, i), (LARGEUR, i))
+
+        # ════════════════════════════════════════════════════════════════════
+        #  ZONES  (toutes les constantes de placement ici)
+        # ════════════════════════════════════════════════════════════════════
+        PAD   = 20          # marge extérieure
+        GAP   = 8           # espace entre blocs
+
+        # Bandeau haut
+        HDR_H = 100
+
+        # Colonne gauche (score + XP)
+        LC_X  = PAD
+        LC_W  = 340
+        LC_Y  = HDR_H + GAP          # 108
+        SC_H  = 152                  # score box
+        XP_H  = 50                   # xp box
+        # fin colonne gauche : LC_Y + SC_H + GAP + XP_H = 108+152+8+50 = 318
+
+        # Graphique (droite du score)
+        GR_X  = LC_X + LC_W + GAP   # 368
+        GR_W  = LARGEUR - GR_X - PAD  # 1200-368-20 = 812
+        GR_Y  = HDR_H + GAP          # 108
+        GR_H  = SC_H + GAP + XP_H   # 210  (même hauteur que colonne gauche)
+
+        # Bilan SVT (pleine largeur)
+        BL_Y  = GR_Y + GR_H + GAP   # 108+210+8 = 326
+        BL_H  = HAUTEUR - BL_Y - PAD - 52  # 800-326-20-52 = 402  → ajusté ci-dessous
+        BTN_H = 44
+        BTN_Y = HAUTEUR - PAD - BTN_H  # 800-20-44 = 736
+        BL_H  = BTN_Y - GAP - BL_Y   # 736-8-326 = 402
+
+        # ── BANDEAU TITRE ────────────────────────────────────────────────────
+        ban = pygame.Surface((LARGEUR, HDR_H), pygame.SRCALPHA)
+        ban.fill((0, 0, 0, 175))
+        self.ecran.blit(ban, (0, 0))
+
+        s_tit   = self.fonte_titre.render(titre, True, couleur)
+        s_tit_o = self.fonte_titre.render(titre, True, NOIR)
+        cx_hdr  = LARGEUR // 2
+        self.ecran.blit(s_tit_o, s_tit_o.get_rect(center=(cx_hdr + 3, 40 + 3)))
+        self.ecran.blit(s_tit,   s_tit.get_rect(center=(cx_hdr, 40)))
+
+        s_sub = self.fonte_sous_titre.render(sous_titre, True, BLANC)
+        self.ecran.blit(s_sub, s_sub.get_rect(center=(cx_hdr, 80)))
+
+        # ── SCORE BOX ────────────────────────────────────────────────────────
+        sc_rect = pygame.Rect(LC_X, LC_Y, LC_W, SC_H)
+        pygame.draw.rect(self.ecran, (18, 22, 40), sc_rect, border_radius=14)
+        pygame.draw.rect(self.ecran, couleur, sc_rect, 3, border_radius=14)
+
+        s_label = self.fonte_texte.render("SCORE FINAL", True, couleur)
+        self.ecran.blit(s_label, s_label.get_rect(center=(sc_rect.centerx, LC_Y + 22)))
+
         # Sauvegarde meilleur score
         if score_total > self.meilleur_score:
             self.meilleur_score = score_total
@@ -2775,143 +2885,377 @@ class JeuPetitDej:
         else:
             nouveau_record = False
 
-        # -- Calcul et application XP pass (une seule fois par partie) ------
+        s_val = self.fonte_score.render(str(score_total), True, couleur)
+        self.ecran.blit(s_val, s_val.get_rect(center=(sc_rect.centerx, LC_Y + 75)))
+
+        if nouveau_record and score_total > 0:
+            s_rec = self.fonte_petite.render("*  NOUVEAU RECORD !  *", True, OR)
+            self.ecran.blit(s_rec, s_rec.get_rect(center=(sc_rect.centerx, LC_Y + 112)))
+        else:
+            s_best = self.fonte_petite.render(f"Record : {self.meilleur_score}", True, GRIS)
+            self.ecran.blit(s_best, s_best.get_rect(center=(sc_rect.centerx, LC_Y + 112)))
+
+        s_st = self.fonte_petite.render(
+            f"Energie {self.score_energie}  |  Sante {self.score_sante}  |  x{self.max_combo}  |  {int(t)}s",
+            True, (140, 150, 180))
+        self.ecran.blit(s_st, s_st.get_rect(center=(sc_rect.centerx, LC_Y + 135)))
+
+        # ── XP PASS ROYAL ────────────────────────────────────────────────────
         if not hasattr(self, '_pass_xp_applique') or not self._pass_xp_applique:
             self.pass_xp_gagnee = self._calculer_xp_partie()
-            ancien_niveau = self.boutique.get("pass_niveau", 0)
+            ancien_niv = self.boutique.get("pass_niveau", 0)
             self._appliquer_xp_pass(self.pass_xp_gagnee)
             self._pass_xp_applique = True
-            self._pass_montee_niveau = self.boutique.get("pass_niveau", 0) > ancien_niveau
+            self._pass_montee_niveau = self.boutique.get("pass_niveau", 0) > ancien_niv
         else:
             self._pass_montee_niveau = False
 
-        self.ecran.blit(self.fonte_sous_titre.render("VOTRE SCORE", True, couleur), (60, y))
-        self.ecran.blit(self.fonte_score.render(str(score_total), True, couleur), (200, y+40))
-        if nouveau_record and score_total > 0:
-            record_surf = self.fonte_sous_titre.render("NOUVEAU RECORD !", True, OR)
-            self.ecran.blit(record_surf, (370, y+48))
-        best_surf = self.fonte_texte.render(f"Meilleur score : {self.meilleur_score}", True, GRIS)
-        self.ecran.blit(best_surf, (60, y+92))
-        self.ecran.blit(self.fonte_texte.render(
-            f"Energie: {self.score_energie}  |  Sante: {self.score_sante}  |  Temps: {int(t)}s  |  Meilleur combo: x{self.max_combo}",
-            True, GRIS), (60, y+114))
-
-        # -- Barre d'XP Pass Royal -----------------------------------------
         pass_niv = self.boutique.get("pass_niveau", 0)
         pass_xp  = self.boutique.get("pass_xp", 0)
-        # Trouver XP du palier actuel et suivant
-        xp_cur_palier = PASS_TIERS[min(pass_niv, len(PASS_TIERS)-1)]["xp_cumul"]
-        if pass_niv < len(PASS_TIERS):
-            xp_next_palier = PASS_TIERS[pass_niv]["xp_cumul"]
-        else:
-            xp_next_palier = XP_MAX_TOTAL
-        prog_pct = 0.0
-        if xp_next_palier > xp_cur_palier:
-            prog_pct = min(1.0, (pass_xp - xp_cur_palier) / (xp_next_palier - xp_cur_palier))
+        xp_cur   = PASS_TIERS[min(pass_niv, len(PASS_TIERS)-1)]["xp_cumul"]
+        xp_nxt   = PASS_TIERS[pass_niv]["xp_cumul"] if pass_niv < len(PASS_TIERS) else XP_MAX_TOTAL
+        prog_pct = min(1.0, (pass_xp - xp_cur) / (xp_nxt - xp_cur)) if xp_nxt > xp_cur else 0.0
 
-        xp_box = pygame.Rect(50, y + 138, LARGEUR - 100, 56)
-        pygame.draw.rect(self.ecran, (15, 10, 35), xp_box, border_radius=12)
-        pygame.draw.rect(self.ecran, VIOLET_PASS, xp_box, 3, border_radius=12)
-        # Titre PASS
-        surf_pt = self.fonte_petite.render(f"PASS ROYAL  |  Palier {pass_niv}/{len(PASS_TIERS)}  |  +{self.pass_xp_gagnee} XP cette partie", True, (200, 150, 255))
-        self.ecran.blit(surf_pt, (70, y + 145))
-        # Barre de progression
-        bx2, by2, bw2, bh2 = 70, y + 161, LARGEUR - 160, 16
-        pygame.draw.rect(self.ecran, (40, 30, 70), (bx2, by2, bw2, bh2), border_radius=8)
+        xp_y  = LC_Y + SC_H + GAP
+        xp_rect = pygame.Rect(LC_X, xp_y, LC_W, XP_H)
+        pygame.draw.rect(self.ecran, (15, 10, 35), xp_rect, border_radius=12)
+        pygame.draw.rect(self.ecran, VIOLET_PASS, xp_rect, 2, border_radius=12)
+
+        s_pass_lbl = self.fonte_petite.render(
+            f"PASS ROYAL  Palier {pass_niv}/{len(PASS_TIERS)}  +{self.pass_xp_gagnee} XP",
+            True, (200, 150, 255))
+        self.ecran.blit(s_pass_lbl, s_pass_lbl.get_rect(midleft=(LC_X + 10, xp_y + 14)))
+
+        bar_x, bar_y = LC_X + 10, xp_y + 28
+        bar_w, bar_h = LC_W - 20, 12
+        pygame.draw.rect(self.ecran, (40, 30, 70), (bar_x, bar_y, bar_w, bar_h), border_radius=6)
         if prog_pct > 0:
-            pygame.draw.rect(self.ecran, VIOLET_PASS, (bx2, by2, int(bw2 * prog_pct), bh2), border_radius=8)
-        pygame.draw.rect(self.ecran, (200, 150, 255), (bx2, by2, bw2, bh2), 2, border_radius=8)
-        xp_txt = self.fonte_petite.render(f"{pass_xp} / {xp_next_palier} XP", True, BLANC)
-        self.ecran.blit(xp_txt, xp_txt.get_rect(center=(bx2 + bw2 // 2, by2 + bh2 // 2)))
+            pygame.draw.rect(self.ecran, VIOLET_PASS,
+                             (bar_x, bar_y, int(bar_w * prog_pct), bar_h), border_radius=6)
+        pygame.draw.rect(self.ecran, (200, 150, 255), (bar_x, bar_y, bar_w, bar_h), 1, border_radius=6)
         if self._pass_montee_niveau:
-            surf_up = self.fonte_sous_titre.render(f"PALIER {pass_niv} ATTEINT !", True, OR)
-            self.ecran.blit(surf_up, surf_up.get_rect(midright=(LARGEUR - 65, y + 162)))
+            s_up = self.fonte_petite.render(f"PALIER {pass_niv} ATTEINT !", True, OR)
+            self.ecran.blit(s_up, s_up.get_rect(midright=(LC_X + LC_W - 8, xp_y + 14)))
 
-        # Analyse nutritionnelle
-        expl_rect = pygame.Rect(50, 355, LARGEUR-100, 340)
-        pygame.draw.rect(self.ecran, BLANC, expl_rect, border_radius=15)
-        pygame.draw.rect(self.ecran, couleur, expl_rect, 5, border_radius=15)
-        self.ecran.blit(self.fonte_sous_titre.render("ANALYSE NUTRITIONNELLE", True, couleur), (70, 335))
+        # ════════════════════════════════════════════════════════════════════
+        #  GRAPHIQUE DE GLYCEMIE
+        # ════════════════════════════════════════════════════════════════════
+        gx, gy, gw, gh = GR_X, GR_Y, GR_W, GR_H
 
-        if score_total >= 150:
-            lignes = [
-                ("POURQUOI C'EST EXCELLENT :", True),
-                ("", False),
-                ("1. GLYCEMIE STABLE : glucides complexes = liberation progressive du glucose.", False),
-                ("   Pas de pic d'energie ! (Source : ANSES, 2016)", False),
-                ("", False),
-                ("2. SATIETE PROLONGEE : les proteines ralentissent la digestion.", False),
-                ("   Vous tiendrez jusqu'au dejeuner ! (Source : PNNS 2019-2023)", False),
-                ("", False),
-                ("3. ENERGIE DURABLE : les bonnes graisses fournissent une energie progressive.", False),
-                ("   (Source : Table Ciqual ANSES)", False),
-            ]
-        elif self.defaite_pieges or self.defaite_manques or score_total < 100:
-            lignes = [
-                ("PROBLEME MAJEUR :", True),
-                ("", False),
-                ("Les sucres RAPIDES (cereales sucrees, viennoiseries, sodas) provoquent", False),
-                ("un PIC de glycemie puis une CHUTE brutale.", False),
-                ("", False),
-                ("Consequence : COUP DE POMPE a 10h !", False),
-                ("(Source : ANSES, 'Sucres dans l'alimentation' 2016)", False),
-                ("", False),
-                ("Sans PROTEINES ni FIBRES, la faim revient en 1-2h.", False),
-                ("(Source : Etude INCA 3, ANSES 2017)", False),
-            ]
+        pygame.draw.rect(self.ecran, (10, 14, 32), (gx, gy, gw, gh), border_radius=14)
+        pygame.draw.rect(self.ecran, (70, 90, 150), (gx, gy, gw, gh), 3, border_radius=14)
+
+        s_gt = self.fonte_texte.render(
+            "GLYCEMIE MATINALE  (simplifie, d\'apres ANSES 2016)", True, BLANC)
+        self.ecran.blit(s_gt, s_gt.get_rect(center=(gx + gw // 2, gy + 16)))
+
+        # Zone de tracé (marges internes)
+        MX, MY = gx + 50, gy + 30
+        MW, MH = gw - 64, gh - 48
+
+        # Axes
+        pygame.draw.line(self.ecran, (90, 100, 140), (MX, MY), (MX, MY + MH), 2)
+        pygame.draw.line(self.ecran, (90, 100, 140), (MX, MY + MH), (MX + MW, MY + MH), 2)
+
+        # Grille et labels X
+        heures = ["7h", "8h", "9h", "10h", "11h", "12h"]
+        for i, h in enumerate(heures):
+            xi = MX + int(i * MW / (len(heures) - 1))
+            pygame.draw.line(self.ecran, (40, 46, 70), (xi, MY), (xi, MY + MH - 1), 1)
+            sh = self.fonte_petite.render(h, True, (140, 155, 185))
+            self.ecran.blit(sh, sh.get_rect(center=(xi, MY + MH + 12)))
+
+        # Label axe Y (rotaté)
+        s_ay = self.fonte_petite.render("Glycemie", True, (140, 155, 185))
+        s_ay = pygame.transform.rotate(s_ay, 90)
+        self.ecran.blit(s_ay, (gx + 4, MY + MH // 2 - s_ay.get_height() // 2))
+
+        # Bande zone normale
+        Z_TOP = MY + int(MH * 0.18)
+        Z_BOT = MY + int(MH * 0.52)
+        zs = pygame.Surface((MW, Z_BOT - Z_TOP), pygame.SRCALPHA)
+        zs.fill((0, 200, 80, 30))
+        self.ecran.blit(zs, (MX, Z_TOP))
+        pygame.draw.line(self.ecran, (0, 160, 60), (MX, Z_BOT), (MX + MW, Z_BOT), 1)
+        pygame.draw.line(self.ecran, (0, 160, 60), (MX, Z_TOP), (MX + MW, Z_TOP), 1)
+        s_zn = self.fonte_petite.render("Zone normale (0,7-1,1 g/L)", True, (0, 175, 65))
+        self.ecran.blit(s_zn, (MX + MW - s_zn.get_width() - 3, Z_TOP - 13))
+
+        # Courbe mauvais ptit-dej (rouge)
+        pts_m = [(0.00,0.36),(0.22,0.62),(0.30,0.92),
+                 (0.42,0.66),(0.55,0.12),(0.72,0.30),(1.00,0.32)]
+        ppm = [(MX + int(p*MW), MY + int((1-v)*MH)) for p,v in pts_m]
+        pygame.draw.lines(self.ecran, (215, 65, 65), False, ppm, 3)
+        for px2,py2 in ppm:
+            pygame.draw.circle(self.ecran, (215, 65, 65), (px2, py2), 4)
+
+        cb_x = MX + int(0.55 * MW)
+        cb_y = MY + int((1 - 0.12) * MH)
+        pygame.draw.line(self.ecran, (255, 90, 90), (cb_x, cb_y - 2), (cb_x - 8, cb_y - 28), 2)
+        s_coup = self.fonte_petite.render("COUP DE BARRE !", True, (255, 90, 90))
+        self.ecran.blit(s_coup, (cb_x - s_coup.get_width() - 10, cb_y - 40))
+
+        # Courbe bon ptit-dej (vert)
+        pts_b = [(0.00,0.36),(0.18,0.48),(0.30,0.58),
+                 (0.50,0.56),(0.68,0.52),(0.84,0.48),(1.00,0.44)]
+        ppb = [(MX + int(p*MW), MY + int((1-v)*MH)) for p,v in pts_b]
+        pygame.draw.lines(self.ecran, (0, 210, 95), False, ppb, 3)
+        for px2,py2 in ppb:
+            pygame.draw.circle(self.ecran, (0, 210, 95), (px2, py2), 4)
+
+        s_midi = self.fonte_petite.render("Tient jusqu\'a midi !", True, (0, 210, 95))
+        self.ecran.blit(s_midi, (MX + MW - s_midi.get_width() - 3,
+                                  MY + int((1-0.44)*MH) - 15))
+
+        # Marqueur "TOI"
+        if bon_ptdej:
+            mk_x = MX + MW
+            mk_y = MY + int((1 - 0.44) * MH)
         else:
-            lignes = [
-                ("POINTS A AMELIORER :", True),
-                ("", False),
-                ("- Ajouter plus de PROTEINES (oeufs, yaourt) pour un effet coupe-faim.", False),
-                ("", False),
-                ("- Privilegier les GLUCIDES COMPLEXES (avoine, pain complet) a IG bas.", False),
-                ("", False),
-                ("- Eviter les sucres rapides.", False),
-                ("(Source : ANSES, Actualisation des reperes du PNNS 2016)", False),
+            mk_x = MX + int(0.55 * MW)
+            mk_y = MY + int((1 - 0.12) * MH)
+        pygame.draw.circle(self.ecran, OR, (mk_x, mk_y), 10, 3)
+        s_toi = self.fonte_petite.render("TOI", True, OR)
+        self.ecran.blit(s_toi, s_toi.get_rect(center=(mk_x, mk_y - 16)))
+
+        # Légende graphique
+        leg_y = gy + gh - 18
+        lx1 = gx + 55
+        pygame.draw.line(self.ecran, (215, 65, 65), (lx1, leg_y), (lx1+28, leg_y), 3)
+        pygame.draw.circle(self.ecran, (215, 65, 65), (lx1+14, leg_y), 4)
+        self.ecran.blit(self.fonte_petite.render("Sucres rapides", True, (215, 65, 65)),
+                        (lx1+34, leg_y - 8))
+        lx2 = lx1 + 190
+        pygame.draw.line(self.ecran, (0, 210, 95), (lx2, leg_y), (lx2+28, leg_y), 3)
+        pygame.draw.circle(self.ecran, (0, 210, 95), (lx2+14, leg_y), 4)
+        self.ecran.blit(self.fonte_petite.render("Glucides complexes + proteines", True, (0, 210, 95)),
+                        (lx2+34, leg_y - 8))
+
+        # ════════════════════════════════════════════════════════════════════
+        #  BILAN SVT  –  3 colonnes
+        # ════════════════════════════════════════════════════════════════════
+        BL_X = PAD
+        BL_W = LARGEUR - 2 * PAD
+        pygame.draw.rect(self.ecran, (10, 14, 30), (BL_X, BL_Y, BL_W, BL_H), border_radius=14)
+        pygame.draw.rect(self.ecran, couleur,      (BL_X, BL_Y, BL_W, BL_H), 3, border_radius=14)
+
+        s_bilan = self.fonte_texte.render(
+            "BILAN SVT  —  POURQUOI CE RESULTAT ?", True, couleur)
+        self.ecran.blit(s_bilan, s_bilan.get_rect(center=(LARGEUR // 2, BL_Y + 18)))
+        pygame.draw.line(self.ecran, couleur,
+                         (BL_X + 16, BL_Y + 33), (BL_X + BL_W - 16, BL_Y + 33), 1)
+
+        # Définition des 3 points SVT selon le résultat
+        if bon_ptdej and score_total >= 150:
+            svt = [
+                {
+                    "col":   VERT,
+                    "titre": "GLYCEMIE STABLE",
+                    "corps": (
+                        "Les glucides complexes (pain complet, avoine) "
+                        "se digèrent lentement. Le glucose arrive "
+                        "progressivement dans le sang : glycemie "
+                        "stable entre 0,70 et 1,10 g/L. "
+                        "Pas de pic = pas de chute = pas de coup de barre a 11h !"
+                    ),
+                    "src": "ANSES 2016",
+                },
+                {
+                    "col":   ORANGE,
+                    "titre": "PROTEINES = SATIETE",
+                    "corps": (
+                        "Les proteines (oeuf, yaourt) ralentissent "
+                        "la vidange gastrique et stimulent les "
+                        "hormones de satiete (leptine, GLP-1). "
+                        "Tu n\'as pas faim avant midi et tu "
+                        "te concentres mieux en cours !"
+                    ),
+                    "src": "PNNS 2019-2023",
+                },
+                {
+                    "col":   BLEU_CIEL,
+                    "titre": "FIBRES & BONNES GRAISSES",
+                    "corps": (
+                        "Les fibres (fruits, cereales completes) "
+                        "ralentissent l\'absorption des sucres. "
+                        "Les bonnes graisses (amandes) fournissent "
+                        "une energie progressive sur 3 a 4 heures. "
+                        "Ensemble, ils abaissent l\'Index Glycemique du repas."
+                    ),
+                    "src": "Ciqual ANSES",
+                },
+            ]
+        elif bon_ptdej:   # score 100-149
+            svt = [
+                {
+                    "col":   ORANGE,
+                    "titre": "BON DEBUT !",
+                    "corps": (
+                        "Tu as fait de bons choix alimentaires "
+                        "mais le petit-dejeuner n\'est pas encore "
+                        "complet. Il devrait couvrir 20 a 25 % "
+                        "des apports energetiques journaliers."
+                    ),
+                    "src": "PNNS 2019-2023",
+                },
+                {
+                    "col":   VERT,
+                    "titre": "PRIVILEGIER L\'IG BAS",
+                    "corps": (
+                        "Flocons d\'avoine, pain complet et cereales "
+                        "non sucrees ont un Index Glycemique (IG) bas. "
+                        "Ils liberent le glucose lentement sur "
+                        "3 a 4 heures, evitant le coup de barre. "
+                        "Evite les cereales soufflees et le pain blanc."
+                    ),
+                    "src": "Ciqual ANSES",
+                },
+                {
+                    "col":   BLEU_CIEL,
+                    "titre": "AJOUTER DES PROTEINES",
+                    "corps": (
+                        "Oeufs, yaourt nature, fromage blanc : "
+                        "ajoute une source de proteines a ton "
+                        "petit-dejeuner. Elles ralentissent la "
+                        "digestion et prolongent la satiete "
+                        "jusqu\'au dejeuner sans effort."
+                    ),
+                    "src": "ANSES PNNS 2016",
+                },
+            ]
+        else:   # mauvais résultat
+            svt = [
+                {
+                    "col":   ROUGE,
+                    "titre": "PIC DE GLYCEMIE",
+                    "corps": (
+                        "Les sucres rapides (bonbons, cereales "
+                        "sucrees, viennoiseries) sont absorbes "
+                        "très vite. La glycemie monte en fleche "
+                        "puis chute brutalement : c\'est "
+                        "l\'hypoglycemie reactionnelle, le "
+                        "coup de barre a 10-11h !"
+                    ),
+                    "src": "ANSES 2016",
+                },
+                {
+                    "col":   ORANGE,
+                    "titre": "SANS PROTEINES",
+                    "corps": (
+                        "Sans proteines, l\'estomac se vide en "
+                        "1 a 2 heures. La ghréline (hormone de "
+                        "la faim) augmente vite, la concentration "
+                        "baisse. Tu ressens la faim bien avant "
+                        "midi et tu deviens moins efficace."
+                    ),
+                    "src": "INCA 3, ANSES 2017",
+                },
+                {
+                    "col":   VERT,
+                    "titre": "LA SOLUTION",
+                    "corps": (
+                        "Un vrai petit-dejeuner equilibre : "
+                        "glucides complexes + proteines + fibres "
+                        "+ eau. Par exemple pain complet + oeuf "
+                        "ou yaourt + fruit frais. "
+                        "= 20-25 % des apports energetiques journaliers."
+                    ),
+                    "src": "SPF / PNNS 2019-2023",
+                },
             ]
 
-        ye = 425
-        for texte, gras in lignes:
-            if texte == "":
-                ye += 8
-            else:
-                f = self.fonte_texte if gras else self.fonte_petite
-                c = couleur if gras else GRIS
-                self.ecran.blit(f.render(texte, True, c), (70, ye))
-                ye += 24 if gras else 18
+        # Dessin des colonnes
+        NCOLS = 3
+        COL_PAD  = 8      # marge entre colonnes
+        COL_W    = (BL_W - COL_PAD * (NCOLS + 1)) // NCOLS   # ~370px
+        COL_Y0   = BL_Y + 38                                  # début des colonnes
+        COL_H    = BL_H - 38 - COL_PAD                       # hauteur disponible
+        TXT_MAXW = COL_W - 20                                 # aire texte = COL_W - 2*10
 
-        # Boutons
+        for i, pt in enumerate(svt):
+            cx = BL_X + COL_PAD + i * (COL_W + COL_PAD)
+
+            # Fond de colonne
+            col_rect = pygame.Rect(cx, COL_Y0, COL_W, COL_H)
+            pygame.draw.rect(self.ecran, (20, 26, 46), col_rect, border_radius=12)
+            pygame.draw.rect(self.ecran, pt["col"], col_rect, 2, border_radius=12)
+
+            # Cercle numéroté
+            circ_cx = cx + COL_W // 2
+            circ_cy = COL_Y0 + 18
+            pygame.draw.circle(self.ecran, pt["col"], (circ_cx, circ_cy), 15)
+            s_n = self.fonte_texte.render(str(i + 1), True, NOIR)
+            self.ecran.blit(s_n, s_n.get_rect(center=(circ_cx, circ_cy)))
+
+            # Titre de colonne (centré, couleur vive)
+            s_ct = self.fonte_texte.render(pt["titre"], True, pt["col"])
+            if s_ct.get_width() > COL_W - 12:
+                # Si trop large, réduire avec fonte_petite
+                s_ct = self.fonte_petite.render(pt["titre"], True, pt["col"])
+            self.ecran.blit(s_ct, s_ct.get_rect(center=(circ_cx, COL_Y0 + 42)))
+
+            # Séparateur
+            sep_y = COL_Y0 + 55
+            pygame.draw.line(self.ecran, pt["col"],
+                             (cx + 10, sep_y), (cx + COL_W - 10, sep_y), 1)
+
+            # Corps texte (word wrap automatique)
+            txt_y = sep_y + 8
+            lignes_corps = wrap_text(self.fonte_petite, pt["corps"], TXT_MAXW)
+            for ligne in lignes_corps:
+                if txt_y + 17 > COL_Y0 + COL_H - 26:
+                    break   # sécurité : ne pas déborder sur la source
+                s_l = self.fonte_petite.render(ligne, True, (195, 205, 228))
+                self.ecran.blit(s_l, (cx + 10, txt_y))
+                txt_y += 17
+
+            # Source (en bas de colonne, collée au bas)
+            src_y = COL_Y0 + COL_H - 18
+            s_src = self.fonte_petite.render(f"Source : {pt['src']}", True, (95, 108, 140))
+            # Tronquer si nécessaire
+            while s_src.get_width() > COL_W - 16 and len(pt["src"]) > 5:
+                pt["src"] = pt["src"][:-1]
+                s_src = self.fonte_petite.render(f"Source : {pt['src']}...", True, (95, 108, 140))
+            self.ecran.blit(s_src, (cx + 10, src_y))
+
+        # ── BOUTONS ──────────────────────────────────────────────────────────
         souris = pygame.mouse.get_pos()
-        btn = pygame.Rect(LARGEUR//2 - 290, 730, 260, 52)
-        hover = btn.collidepoint(souris)
-        pygame.draw.rect(self.ecran, VERT if hover else (52,152,219), btn, border_radius=12)
-        pygame.draw.rect(self.ecran, BLANC, btn, 4, border_radius=12)
-        t_btn = self.fonte_sous_titre.render("REJOUER", True, BLANC)
-        self.ecran.blit(t_btn, t_btn.get_rect(center=btn.center))
+        btn_w, btn_h = 260, BTN_H
+        btn_gap = 30
+        total_w = 2 * btn_w + btn_gap
+        btn_x0  = (LARGEUR - total_w) // 2
 
-        # Bouton PASS ROYAL
-        btn_pass = pygame.Rect(LARGEUR//2 + 30, 730, 260, 52)
-        h_pass = btn_pass.collidepoint(souris)
-        pygame.draw.rect(self.ecran, VIOLET_PASS if h_pass else (60, 20, 120), btn_pass, border_radius=12)
-        pygame.draw.rect(self.ecran, (200, 150, 255), btn_pass, 3, border_radius=12)
-        surf_pass = self.fonte_sous_titre.render("PASS ROYAL ->", True, BLANC)
-        self.ecran.blit(surf_pass, surf_pass.get_rect(center=btn_pass.center))
+        btn_r = pygame.Rect(btn_x0, BTN_Y, btn_w, btn_h)
+        h_r   = btn_r.collidepoint(souris)
+        pygame.draw.rect(self.ecran, VERT if h_r else (52, 152, 219), btn_r, border_radius=12)
+        pygame.draw.rect(self.ecran, BLANC, btn_r, 3, border_radius=12)
+        s_r = self.fonte_sous_titre.render("REJOUER", True, BLANC)
+        self.ecran.blit(s_r, s_r.get_rect(center=btn_r.center))
 
+        btn_p = pygame.Rect(btn_x0 + btn_w + btn_gap, BTN_Y, btn_w, btn_h)
+        h_p   = btn_p.collidepoint(souris)
+        pygame.draw.rect(self.ecran, VIOLET_PASS if h_p else (60, 20, 120), btn_p, border_radius=12)
+        pygame.draw.rect(self.ecran, (200, 150, 255), btn_p, 3, border_radius=12)
+        s_p = self.fonte_sous_titre.render("PASS ROYAL ->", True, BLANC)
+        self.ecran.blit(s_p, s_p.get_rect(center=btn_p.center))
+
+        # ── EVENEMENTS ───────────────────────────────────────────────────────
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.scene = "accueil"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if btn.collidepoint(event.pos):
+                if btn_r.collidepoint(event.pos):
                     self._pass_xp_applique = False
                     self.scene = "accueil"
-                elif btn_pass.collidepoint(event.pos):
+                elif btn_p.collidepoint(event.pos):
                     self._pass_xp_applique = False
                     self.scene = "pass"
 
         return True
+
+
 
     # -------------------------------------------------------------------------
     #  HELPER : dessiner une boite style Brawl Stars
@@ -3305,6 +3649,39 @@ class JeuPetitDej:
                 self.ecran.blit(self.fonte_sous_titre.render(encore_txt, True, BLANC if peut_enc else GRIS),
                                 self.fonte_sous_titre.render(encore_txt, True, BLANC).get_rect(center=btn_enc.center))
 
+        # ── Overlay first-time boites ─────────────────────────────────────────
+        if not self._tuto_boites_vu and self._boite_etat == "menu":
+            self._dessiner_overlay_firsttime(
+                "BOITES DE RECOMPENSES",
+                (120, 185, 255),
+                [
+                    "Ouvre des boites pour gagner des recompenses aleatoires !",
+                    "",
+                    "  Boite (80p)  : pieces, XP pass ou sticker rare.",
+                    "  Grande Boite (220p)  : pieces, XP, stickers",
+                    "  et petite chance d'obtenir un bol exclusif !",
+                    "  Mega Boite (600p)  : grosses pieces, beaucoup d'XP,",
+                    "  stickers et bols exclusifs avec bonne probabilite.",
+                    "",
+                    "Tu obtiens des boites en achetant ici ou en reclamant",
+                    "des paliers du Pass Royal.",
+                    "Si tu as deja tout debloque : compensation en pieces.",
+                ],
+            )
+            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
+            souris_ft = pygame.mouse.get_pos()
+            h_ft = btn_ok_ft.collidepoint(souris_ft)
+            pygame.draw.rect(self.ecran, (70, 155, 255) if h_ft else (30, 90, 180), btn_ok_ft, border_radius=14)
+            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
+            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
+                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
+            for ev_ft in pygame.event.get():
+                if ev_ft.type == pygame.QUIT:
+                    return False
+                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
+                    self._tuto_boites_vu = True
+            return True
+
         # ── Gestion des événements ────────────────────────────────────────────
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -3416,39 +3793,6 @@ class JeuPetitDej:
                                 self._sauvegarder_boutique()
                                 self._boite_etat       = "shake"
                                 self._boite_anim_debut = now
-
-        # ── Overlay first-time boites ─────────────────────────────────────────
-        if not self._tuto_boites_vu and self._boite_etat == "menu":
-            self._dessiner_overlay_firsttime(
-                "BOITES DE RECOMPENSES",
-                (120, 185, 255),
-                [
-                    "Ouvre des boites pour gagner des recompenses aleatoires !",
-                    "",
-                    "  Boite (80p)  : pieces, XP pass ou sticker rare.",
-                    "  Grande Boite (220p)  : pieces, XP, stickers",
-                    "  et petite chance d'obtenir un bol exclusif !",
-                    "  Mega Boite (600p)  : grosses pieces, beaucoup d'XP,",
-                    "  stickers et bols exclusifs avec bonne probabilite.",
-                    "",
-                    "Tu obtiens des boites en achetant ici ou en reclamant",
-                    "des paliers du Pass Royal.",
-                    "Si tu as deja tout debloque : compensation en pieces.",
-                ],
-            )
-            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
-            souris_ft = pygame.mouse.get_pos()
-            h_ft = btn_ok_ft.collidepoint(souris_ft)
-            pygame.draw.rect(self.ecran, (70, 155, 255) if h_ft else (30, 90, 180), btn_ok_ft, border_radius=14)
-            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
-            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
-                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
-            for ev_ft in pygame.event.get():
-                if ev_ft.type == pygame.QUIT:
-                    return False
-                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
-                    self._tuto_boites_vu = True
-            return True
 
         return True
 
@@ -3643,6 +3987,39 @@ class JeuPetitDej:
         s = self.fonte_sous_titre.render("<< Retour", True, BLANC)
         self.ecran.blit(s, s.get_rect(center=btn_ret.center))
 
+        # ── Overlay first-time pass ───────────────────────────────────────────
+        if not self._tuto_pass_vu:
+            self._dessiner_overlay_firsttime(
+                "PASS ROYAL",
+                (200, 150, 255),
+                [
+                    "Le Pass Royal te recompense pour chaque partie jouee !",
+                    "",
+                    "  Paliers  : gagne de l'XP en jouant pour monter",
+                    "  les 20 paliers du pass.",
+                    "",
+                    "  Voie GRATUITE  : pieces et boites pour tout le monde.",
+                    "  Voie ROYALE  : skins exclusifs + grosses boites",
+                    "  (se debloque contre 1200 pieces).",
+                    "",
+                    "Reclame tes recompenses en cliquant sur RECLAMER !",
+                    "Elles ne sont pas donnees automatiquement.",
+                ],
+            )
+            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
+            souris_ft = pygame.mouse.get_pos()
+            h_ft = btn_ok_ft.collidepoint(souris_ft)
+            pygame.draw.rect(self.ecran, VIOLET_PASS if h_ft else (60, 20, 120), btn_ok_ft, border_radius=14)
+            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
+            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
+                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
+            for ev_ft in pygame.event.get():
+                if ev_ft.type == pygame.QUIT:
+                    return False
+                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
+                    self._tuto_pass_vu = True
+            return True
+
         # ── Gestion événements ────────────────────────────────────────────────
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -3694,39 +4071,6 @@ class JeuPetitDej:
                                 self.boutique["pass_recompenses_recues"] = recu_maj
                                 self._sauvegarder_boutique()
                             break
-
-        # ── Overlay first-time pass ───────────────────────────────────────────
-        if not self._tuto_pass_vu:
-            self._dessiner_overlay_firsttime(
-                "PASS ROYAL",
-                (200, 150, 255),
-                [
-                    "Le Pass Royal te recompense pour chaque partie jouee !",
-                    "",
-                    "  Paliers  : gagne de l'XP en jouant pour monter",
-                    "  les 20 paliers du pass.",
-                    "",
-                    "  Voie GRATUITE  : pieces et boites pour tout le monde.",
-                    "  Voie ROYALE  : skins exclusifs + grosses boites",
-                    "  (se debloque contre 1200 pieces).",
-                    "",
-                    "Reclame tes recompenses en cliquant sur RECLAMER !",
-                    "Elles ne sont pas donnees automatiquement.",
-                ],
-            )
-            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
-            souris_ft = pygame.mouse.get_pos()
-            h_ft = btn_ok_ft.collidepoint(souris_ft)
-            pygame.draw.rect(self.ecran, VIOLET_PASS if h_ft else (60, 20, 120), btn_ok_ft, border_radius=14)
-            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
-            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
-                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
-            for ev_ft in pygame.event.get():
-                if ev_ft.type == pygame.QUIT:
-                    return False
-                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
-                    self._tuto_pass_vu = True
-            return True
 
         return True
 
@@ -4240,9 +4584,6 @@ class JeuPetitDej:
         skin_btn_rects = {}  # initialise avant le if/else pour eviter UnboundLocalError
         if self.tuto_boutique == 0:
             # ===================== ONGLET SKINS ============================
-            txt_h = self.fonte_sous_titre.render("Choisis ton bol !", True, BLANC)
-            self.ecran.blit(txt_h, txt_h.get_rect(center=(LARGEUR // 2, 150)))
-
             skins_liste = list(Bol.SKINS.items())
             # Affichage en grille 5 colonnes x 3 lignes
             COLS   = 5
@@ -4524,6 +4865,39 @@ class JeuPetitDej:
         t_ret = self.fonte_sous_titre.render("<< Retour", True, BLANC)
         self.ecran.blit(t_ret, t_ret.get_rect(center=btn_retour.center))
 
+        # ---- Overlay first-time boutique -------------------------------------
+        if not self._tuto_boutique_vu:
+            self._dessiner_overlay_firsttime(
+                "BIENVENUE DANS LA BOUTIQUE !",
+                OR,
+                [
+                    "Ici tu peux depenser tes pieces pour personnaliser",
+                    "ton experience de jeu.",
+                    "",
+                    "  SKINS  : change l'apparence de ton bol.",
+                    "  Choisis parmi 14 bols differents !",
+                    "",
+                    "  AMELIORATIONS  : ameliore ton bol en permanence.",
+                    "  Taille, vitesse, multiplicateur de pieces...",
+                    "",
+                    "Les pieces se gagnent en attrapant des aliments.",
+                    "Plus ton combo est haut, plus tu en gagnes !",
+                ],
+            )
+            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
+            souris_ft = pygame.mouse.get_pos()
+            h_ft = btn_ok_ft.collidepoint(souris_ft)
+            pygame.draw.rect(self.ecran, OR if h_ft else (120, 80, 0), btn_ok_ft, border_radius=14)
+            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
+            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
+                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
+            for ev_ft in pygame.event.get():
+                if ev_ft.type == pygame.QUIT:
+                    return False
+                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
+                    self._tuto_boutique_vu = True
+            return True
+
         # ---- Gestion evenements ----------------------------------------------
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -4587,39 +4961,6 @@ class JeuPetitDej:
                                 self.boutique["pieces"] -= cout2
                                 self.boutique[upg["cle"]] = self.boutique.get(upg["cle"], 0) + 1
                                 self._sauvegarder_boutique()
-
-        # ---- Overlay first-time boutique -------------------------------------
-        if not self._tuto_boutique_vu:
-            self._dessiner_overlay_firsttime(
-                "BIENVENUE DANS LA BOUTIQUE !",
-                OR,
-                [
-                    "Ici tu peux depenser tes pieces pour personnaliser",
-                    "ton experience de jeu.",
-                    "",
-                    "  SKINS  : change l'apparence de ton bol.",
-                    "  Choisis parmi 14 bols differents !",
-                    "",
-                    "  AMELIORATIONS  : ameliore ton bol en permanence.",
-                    "  Taille, vitesse, multiplicateur de pieces...",
-                    "",
-                    "Les pieces se gagnent en attrapant des aliments.",
-                    "Plus ton combo est haut, plus tu en gagnes !",
-                ],
-            )
-            btn_ok_ft = pygame.Rect(LARGEUR//2 - 130, HAUTEUR//2 + 200, 260, 52)
-            souris_ft = pygame.mouse.get_pos()
-            h_ft = btn_ok_ft.collidepoint(souris_ft)
-            pygame.draw.rect(self.ecran, OR if h_ft else (120, 80, 0), btn_ok_ft, border_radius=14)
-            pygame.draw.rect(self.ecran, BLANC, btn_ok_ft, 2, border_radius=14)
-            self.ecran.blit(self.fonte_sous_titre.render("Compris !", True, BLANC),
-                            self.fonte_sous_titre.render("Compris !", True, BLANC).get_rect(center=btn_ok_ft.center))
-            for ev_ft in pygame.event.get():
-                if ev_ft.type == pygame.QUIT:
-                    return False
-                if ev_ft.type == pygame.MOUSEBUTTONDOWN and btn_ok_ft.collidepoint(ev_ft.pos):
-                    self._tuto_boutique_vu = True
-            return True
 
         return True
 
