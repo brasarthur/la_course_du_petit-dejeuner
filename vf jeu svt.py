@@ -1,4 +1,5 @@
 # Créé par BRAS Arthur, le 02/04/2026 en Python 3.7
+# Créé par BRAS Arthur, le 02/04/2026 en Python 3.7
 # Créé par BRAS Arthur, le 31/03/2026 en Python 3.7
 # Créé par BRAS Arthur, le 30/03/2026 en Python 3.7
 # Créé par BRAS Arthur, le 30/03/2026 en Python 3.7
@@ -44,26 +45,26 @@ VIOLET_PASS= (120,  40, 220)
 # PASS ROYAL - 20 paliers
 # =============================================================================
 PASS_TIERS = [
-    {"tier":  1, "xp_cumul":     0, "free": ("pieces",  50),            "premium": ("pieces",  150)},
-    {"tier":  2, "xp_cumul":   250, "free": ("boite", "boite_normale"), "premium": ("pieces",  200)},
-    {"tier":  3, "xp_cumul":   600, "free": ("pieces", 100),            "premium": ("skin", "cosmos")},
-    {"tier":  4, "xp_cumul":  1050, "free": ("pieces", 125),            "premium": ("boite", "grande_boite")},
-    {"tier":  5, "xp_cumul":  1600, "free": ("pieces", 300),            "premium": ("pieces",  400)},
-    {"tier":  6, "xp_cumul":  2250, "free": ("boite", "boite_normale"), "premium": ("pieces",  450)},
-    {"tier":  7, "xp_cumul":  3000, "free": ("pieces", 175),            "premium": ("boite", "grande_boite")},
-    {"tier":  8, "xp_cumul":  3850, "free": ("pieces", 200),            "premium": ("skin", "plasma")},
-    {"tier":  9, "xp_cumul":  4800, "free": ("boite", "grande_boite"),  "premium": ("pieces",  600)},
-    {"tier": 10, "xp_cumul":  5900, "free": ("pieces", 250),            "premium": ("boite", "mega_boite")},
-    {"tier": 11, "xp_cumul":  7100, "free": ("boite", "boite_normale"), "premium": ("pieces",  750)},
-    {"tier": 12, "xp_cumul":  8400, "free": ("pieces", 300),            "premium": ("boite", "grande_boite")},
-    {"tier": 13, "xp_cumul":  9800, "free": ("pieces", 325),            "premium": ("skin", "lava")},
-    {"tier": 14, "xp_cumul": 11300, "free": ("boite", "grande_boite"),  "premium": ("pieces",  900)},
-    {"tier": 15, "xp_cumul": 12900, "free": ("pieces", 375),            "premium": ("boite", "mega_boite")},
-    {"tier": 16, "xp_cumul": 14600, "free": ("boite", "boite_normale"), "premium": ("pieces", 1000)},
-    {"tier": 17, "xp_cumul": 16400, "free": ("pieces", 425),            "premium": ("boite", "mega_boite")},
-    {"tier": 18, "xp_cumul": 18300, "free": ("boite", "grande_boite"),  "premium": ("pieces", 1100)},
-    {"tier": 19, "xp_cumul": 20300, "free": ("pieces", 500),            "premium": ("boite", "mega_boite")},
-    {"tier": 20, "xp_cumul": 22500, "free": ("boite", "mega_boite"),    "premium": ("skin", "roi")},
+    {"tier":  1, "xp_cumul":     0, "free": ("pieces",  50),               "premium": ("pieces",  150)},
+    {"tier":  2, "xp_cumul":   250, "free": ("boite", "boite_normale"),     "premium": ("pieces",  200)},
+    {"tier":  3, "xp_cumul":   600, "free": ("pieces", 100),                "premium": ("skin", "cosmos")},
+    {"tier":  4, "xp_cumul":  1050, "free": ("sticker", "dragon"),          "premium": ("boite", "grande_boite")},
+    {"tier":  5, "xp_cumul":  1600, "free": ("pieces", 300),                "premium": ("pieces",  400)},
+    {"tier":  6, "xp_cumul":  2250, "free": ("boite", "boite_normale"),     "premium": ("sticker", "cristal")},
+    {"tier":  7, "xp_cumul":  3000, "free": ("pieces", 175),                "premium": ("boite", "grande_boite")},
+    {"tier":  8, "xp_cumul":  3850, "free": ("sticker", "galaxie"),         "premium": ("skin", "plasma")},
+    {"tier":  9, "xp_cumul":  4800, "free": ("boite", "grande_boite"),      "premium": ("pieces",  600)},
+    {"tier": 10, "xp_cumul":  5900, "free": ("pieces", 250),                "premium": ("sticker", "phoenix")},
+    {"tier": 11, "xp_cumul":  7100, "free": ("boite", "boite_normale"),     "premium": ("pieces",  750)},
+    {"tier": 12, "xp_cumul":  8400, "free": ("sticker", "trident"),         "premium": ("boite", "grande_boite")},
+    {"tier": 13, "xp_cumul":  9800, "free": ("pieces", 325),                "premium": ("skin", "lava")},
+    {"tier": 14, "xp_cumul": 11300, "free": ("boite", "grande_boite"),      "premium": ("sticker", "dragon")},
+    {"tier": 15, "xp_cumul": 12900, "free": ("pieces", 375),                "premium": ("boite", "mega_boite")},
+    {"tier": 16, "xp_cumul": 14600, "free": ("sticker", "cristal"),         "premium": ("pieces", 1000)},
+    {"tier": 17, "xp_cumul": 16400, "free": ("pieces", 425),                "premium": ("boite", "mega_boite")},
+    {"tier": 18, "xp_cumul": 18300, "free": ("boite", "grande_boite"),      "premium": ("sticker", "galaxie")},
+    {"tier": 19, "xp_cumul": 20300, "free": ("sticker", "phoenix"),         "premium": ("boite", "mega_boite")},
+    {"tier": 20, "xp_cumul": 22500, "free": ("boite", "mega_boite"),        "premium": ("skin", "roi")},
 ]
 PASS_PRIX_PREMIUM = 1200   # coût en pièces pour débloquer la voie royale
 XP_MAX_TOTAL = 22500       # XP pour finir le pass
@@ -82,6 +83,12 @@ STICKERS_CATALOGUE = [
     {"id": "lune",      "nom": "Lune",       "prix": 130, "desc": "Nuit etoilee"},
     {"id": "arc",       "nom": "Arc-en-ciel","prix": 180, "desc": "Couleurs !"},
     {"id": "nuage",     "nom": "Nuage",      "prix": 90,  "desc": "Planer"},
+    # --- Stickers exclusifs boites (non achetables en boutique) ---
+    {"id": "dragon",    "nom": "Dragon",     "prix": 0,   "desc": "Souffle de feu !", "box_only": True},
+    {"id": "cristal",   "nom": "Cristal",    "prix": 0,   "desc": "Rare et brillant", "box_only": True},
+    {"id": "galaxie",   "nom": "Galaxie",    "prix": 0,   "desc": "Infini cosmique",  "box_only": True},
+    {"id": "phoenix",   "nom": "Phoenix",    "prix": 0,   "desc": "Renaissance !",    "box_only": True},
+    {"id": "trident",   "nom": "Trident",    "prix": 0,   "desc": "Pouvoir des mers", "box_only": True},
 ]
 MAX_SLOTS_STICKERS = 3   # nombre d'emplacements sur le bol
 
@@ -102,12 +109,13 @@ BOITES_CATALOGUE = [
         "prix":    80,
         "desc":    "Recompenses de base",
         "contenu": [
-            ("pieces",  50,  35),
-            ("pieces", 100,  25),
-            ("pieces", 150,  15),
-            ("xp",      25,  15),
+            ("pieces",  50,  33),
+            ("pieces", 100,  23),
+            ("pieces", 150,  14),
+            ("xp",      25,  14),
             ("xp",      50,   7),
             ("sticker", None, 3),
+            ("sticker_exclusif", None, 6),   # sticker exclusif boite
         ],
     },
     {
@@ -119,12 +127,13 @@ BOITES_CATALOGUE = [
         "prix":    220,
         "desc":    "Meilleures chances !",
         "contenu": [
-            ("pieces", 150,  25),
-            ("pieces", 300,  20),
-            ("pieces", 500,  10),
-            ("xp",      75,  18),
-            ("xp",     150,  12),
-            ("sticker", None,10),
+            ("pieces", 150,  22),
+            ("pieces", 300,  18),
+            ("pieces", 500,   9),
+            ("xp",      75,  16),
+            ("xp",     150,  10),
+            ("sticker", None, 7),
+            ("sticker_exclusif", None, 13),  # sticker exclusif boite
             ("bol",    None,  5),
         ],
     },
@@ -137,12 +146,13 @@ BOITES_CATALOGUE = [
         "prix":    600,
         "desc":    "Le maximum !",
         "contenu": [
-            ("pieces", 400,  20),
-            ("pieces", 700,  15),
-            ("pieces",1000,  10),
-            ("xp",     200,  18),
-            ("xp",     400,  12),
-            ("sticker", None,12),
+            ("pieces", 400,  17),
+            ("pieces", 700,  12),
+            ("pieces",1000,   8),
+            ("xp",     200,  15),
+            ("xp",     400,  10),
+            ("sticker", None, 8),
+            ("sticker_exclusif", None, 17),  # sticker exclusif boite
             ("bol",    None, 13),
         ],
     },
@@ -153,6 +163,9 @@ def _nom_recompense(reward):
     """Retourne le texte lisible d'une récompense de pass."""
     if reward[0] == "pieces":
         return f"{reward[1]} pieces"
+    if reward[0] == "sticker":
+        stk = next((s for s in STICKERS_CATALOGUE if s["id"] == reward[1]), None)
+        return f"Sticker {stk['nom']}" if stk else f"Sticker {reward[1]}"
     if reward[0] == "boite":
         noms = {"boite_normale": "Boite", "grande_boite": "Grande Boite", "mega_boite": "Mega Boite"}
         return noms.get(reward[1], reward[1])
@@ -919,6 +932,109 @@ class Bol:
             for dx, dy, cr in [(-r//2, r//4, r//2), (0, 0, r*2//3), (r//2, r//4, r//2), (0, r//2, r//2)]:
                 pygame.draw.circle(ecran, (230, 240, 255), (cx + dx, cy + dy), cr)
             pygame.draw.circle(ecran, (255, 255, 255), (cx, cy + r // 4), r // 2)
+
+        # ── Stickers exclusifs boites ──────────────────────────────────────────
+        elif stk_id == "dragon":
+            # Tete de dragon stylisee (rouge/orange)
+            pygame.draw.circle(ecran, (200, 30, 10), (cx, cy), r)
+            pygame.draw.circle(ecran, (255, 80, 20), (cx, cy), int(r * 0.7))
+            # Cornes
+            for dx in (-r * 3 // 5, r * 3 // 5):
+                pts_corn = [(cx + dx, cy - r), (cx + dx - r // 4, cy - r * 5 // 4),
+                            (cx + dx + r // 4, cy - r * 5 // 4)]
+                pygame.draw.polygon(ecran, (255, 100, 0), pts_corn)
+            # Yeux
+            for ex in (cx - r // 3, cx + r // 3):
+                pygame.draw.circle(ecran, (255, 220, 0), (ex, cy - r // 5), r // 4)
+                pygame.draw.circle(ecran, (20, 0, 0),    (ex, cy - r // 5), r // 7)
+            # Reflet
+            pygame.draw.circle(ecran, (255, 140, 60), (cx - r // 3, cy - r // 3), r // 5)
+
+        elif stk_id == "cristal":
+            # Cristal hexagonal bleu brillant
+            pts_hex = []
+            for k in range(6):
+                a = _m.radians(k * 60 - 90)
+                pts_hex.append((int(cx + _m.cos(a) * r), int(cy + _m.sin(a) * r)))
+            pygame.draw.polygon(ecran, (40, 160, 240), pts_hex)
+            # Facettes intérieures
+            pts_inner = []
+            for k in range(6):
+                a = _m.radians(k * 60 - 90)
+                pts_inner.append((int(cx + _m.cos(a) * r * 0.55), int(cy + _m.sin(a) * r * 0.55)))
+            pygame.draw.polygon(ecran, (160, 230, 255), pts_inner)
+            pygame.draw.polygon(ecran, (0, 80, 180), pts_hex, 2)
+            # Eclats de lumiere
+            pygame.draw.line(ecran, (255, 255, 255), (cx - r, cy), (cx - r // 3, cy - r // 3), 2)
+            pygame.draw.circle(ecran, (255, 255, 255), (cx - r // 2, cy - r // 4), 2)
+
+        elif stk_id == "galaxie":
+            # Spirale galactique violette/bleue
+            pygame.draw.circle(ecran, (30, 0, 60), (cx, cy), r)
+            for k in range(60):
+                a = k * 0.22
+                dist = k * r // 60
+                px = int(cx + _m.cos(a) * dist)
+                py = int(cy + _m.sin(a) * dist)
+                col = (int(80 + k * 2), int(k * 2), min(255, 100 + k * 2))
+                pygame.draw.circle(ecran, col, (px, py), max(1, r // 8 - k // 15))
+            # Etoiles
+            for sx, sy, sr in [(-r*2//3, -r//2, 2), (r//2, -r*2//3, 2), (r*2//3, r//2, 1)]:
+                pygame.draw.circle(ecran, (255, 255, 200), (cx + sx, cy + sy), sr)
+            # Noyau brillant
+            pygame.draw.circle(ecran, (255, 220, 100), (cx, cy), r // 5)
+            pygame.draw.circle(ecran, (255, 255, 200), (cx, cy), r // 9)
+
+        elif stk_id == "phoenix":
+            # Oiseau phoenix stylise (or/rouge flamboyant)
+            # Corps
+            pygame.draw.ellipse(ecran, (220, 100, 0), (cx - r // 2, cy - r // 3, r, r * 2 // 3))
+            pygame.draw.ellipse(ecran, (255, 200, 0), (cx - r // 3, cy - r // 4, r * 2 // 3, r // 2))
+            # Ailes
+            for dx, flip in ((-1, 1), (1, -1)):
+                pts_aile = [
+                    (cx, cy),
+                    (cx + dx * r, cy - r * 2 // 3),
+                    (cx + dx * r * 3 // 4, cy + r // 4),
+                ]
+                pygame.draw.polygon(ecran, (255, 140, 0), pts_aile)
+                pygame.draw.polygon(ecran, (255, 220, 50), pts_aile, 1)
+            # Tete
+            pygame.draw.circle(ecran, (255, 180, 0), (cx, cy - r * 2 // 3), r // 4)
+            # Queue en feu
+            for i, col in enumerate([(255,60,0),(255,140,0),(255,210,0)]):
+                pygame.draw.line(ecran, col, (cx, cy + r // 3),
+                                 (cx + (i-1)*r//3, cy + r), 3)
+            # Oeil
+            pygame.draw.circle(ecran, (255, 255, 0), (cx, cy - r * 2 // 3), r // 8)
+            pygame.draw.circle(ecran, (0, 0, 0), (cx + 1, cy - r * 2 // 3), r // 12)
+
+        elif stk_id == "trident":
+            # Trident doré (style dieu de la mer)
+            shaft_w = max(2, r // 5)
+            # Manche
+            pygame.draw.rect(ecran, (200, 160, 0),
+                             (cx - shaft_w // 2, cy - r // 2, shaft_w, r * 3 // 2), border_radius=2)
+            pygame.draw.rect(ecran, (255, 215, 0),
+                             (cx - shaft_w // 2 + 1, cy - r // 2, shaft_w // 2, r * 3 // 2))
+            # Trois dents
+            for dx in (-r * 2 // 3, 0, r * 2 // 3):
+                tip_y = cy - r
+                base_y = cy - r // 4
+                pts_dent = [
+                    (cx + dx, tip_y),
+                    (cx + dx - r // 5, base_y),
+                    (cx + dx + r // 5, base_y),
+                ]
+                pygame.draw.polygon(ecran, (255, 215, 0), pts_dent)
+                pygame.draw.polygon(ecran, (160, 120, 0), pts_dent, 1)
+            # Barre horizontale reliant les dents
+            pygame.draw.rect(ecran, (255, 215, 0),
+                             (cx - r * 2 // 3 - r // 5, cy - r // 4, r * 4 // 3 + r * 2 // 5, shaft_w),
+                             border_radius=2)
+            # Reflet
+            pygame.draw.line(ecran, (255, 255, 180), (cx - shaft_w // 4, cy - r // 2),
+                             (cx - shaft_w // 4, cy + r // 2), 1)
 
     def _dessiner_sticker(self, ecran, cx, cy, rx, ry, sticker, coul_base, now_ms):
         """Dessine les decorations sur le corps du bol - dessins nets et soignes."""
@@ -1937,9 +2053,15 @@ class JeuPetitDej:
         self._sauvegarder_boutique()
 
     def _donner_recompense(self, reward):
-        """Applique une récompense de pass (pièces, boite, ou skin)."""
+        """Applique une récompense de pass (pièces, boite, skin ou sticker)."""
         if reward[0] == "pieces":
             self.boutique["pieces"] = self.boutique.get("pieces", 0) + reward[1]
+        elif reward[0] == "sticker":
+            stk_id = reward[1]
+            s_ach = self.boutique.get("stickers_achetes", ["etoile"])
+            if stk_id not in s_ach:
+                s_ach.append(stk_id)
+            self.boutique["stickers_achetes"] = s_ach
         elif reward[0] == "boite":
             inv = self.boutique.get("boites_inventaire", {})
             inv[reward[1]] = inv.get(reward[1], 0) + 1
@@ -3329,13 +3451,23 @@ class JeuPetitDej:
             cumul += poids
             if r <= cumul:
                 if typ == "sticker":
-                    # Tirer un sticker non encore obtenu, sinon des pièces
+                    # Tirer un sticker normal (non exclusif) non encore obtenu
                     achetes = self.boutique.get("stickers_achetes", ["etoile"])
-                    manquants = [s for s in STICKERS_CATALOGUE if s["id"] not in achetes]
+                    manquants = [s for s in STICKERS_CATALOGUE
+                                 if s["id"] not in achetes and not s.get("box_only", False)]
                     if manquants:
                         stk = random.choice(manquants)
                         return ("sticker", stk["id"])
                     return ("pieces", 80)   # compensation si tout débloqué
+                elif typ == "sticker_exclusif":
+                    # Tirer un sticker exclusif boite non encore obtenu
+                    achetes = self.boutique.get("stickers_achetes", ["etoile"])
+                    exclusifs = [s for s in STICKERS_CATALOGUE
+                                 if s.get("box_only", False) and s["id"] not in achetes]
+                    if exclusifs:
+                        stk = random.choice(exclusifs)
+                        return ("sticker", stk["id"])
+                    return ("pieces", 150)  # compensation si tous débloqués
                 elif typ == "bol":
                     # Tirer un bol premium non encore obtenu
                     tous_skins   = [k for k, v in Bol.SKINS.items()
@@ -4125,6 +4257,19 @@ class JeuPetitDej:
             pygame.draw.circle(ecran, (255, 255, 200), (cx - 5, ry_c + 29), r_ico // 3)
             surf_v = self.fonte_sous_titre.render(str(reward[1]), True, OR if not deja_recue else VERT)
             ecran.blit(surf_v, surf_v.get_rect(center=(cx, ry_c + 60)))
+        elif reward[0] == "sticker":
+            # Afficher l'icone du sticker + badge exclusif si box_only
+            tmp_bol = Bol()
+            stk_info = next((s for s in STICKERS_CATALOGUE if s["id"] == reward[1]), None)
+            tmp_bol._dessiner_sticker_custom(ecran, cx, ry_c + 34, 18, reward[1], now_ms)
+            is_exclusive = stk_info.get("box_only", False) if stk_info else False
+            nom_stk = stk_info["nom"] if stk_info else reward[1]
+            col_stk = ROSE_PASS if not deja_recue else VERT
+            surf_n = self.fonte_petite.render(nom_stk, True, col_stk)
+            ecran.blit(surf_n, surf_n.get_rect(center=(cx, ry_c + 56)))
+            if is_exclusive:
+                ex_surf = self.fonte_petite.render("EXCLUSIF", True, OR)
+                ecran.blit(ex_surf, ex_surf.get_rect(center=(cx, ry_c + 68)))
         elif reward[0] == "boite":
             # Même visuel que l'écran boites, taille réduite
             boite_info = next((b for b in BOITES_CATALOGUE if b["id"] == reward[1]), None)
@@ -4505,26 +4650,37 @@ class JeuPetitDej:
             achete_s  = stk_info["id"] in stickers_achetes
             hover_s   = pygame.Rect(bx_s, by_s, CARD_SW, CARD_SH).collidepoint(souris)
             selec_s   = any(s == stk_info["id"] for s in slots)
-            bg_card = (30, 50, 30) if selec_s else ((45, 45, 65) if achete_s else (35, 35, 50))
+            is_excl   = stk_info.get("box_only", False)
+            bg_card = (30, 50, 30) if selec_s else ((45, 45, 65) if achete_s else ((40, 25, 60) if is_excl else (35, 35, 50)))
             if hover_s and achete_s:
                 bg_card = tuple(min(255, c + 20) for c in bg_card)
             pygame.draw.rect(self.ecran, bg_card, (bx_s, by_s, CARD_SW, CARD_SH), border_radius=12)
-            bord_c = VERT if selec_s else (OR if achete_s else GRIS)
+            bord_c = VERT if selec_s else ((200, 100, 255) if (is_excl and not achete_s) else (OR if achete_s else GRIS))
             pygame.draw.rect(self.ecran, bord_c, (bx_s, by_s, CARD_SW, CARD_SH), 2, border_radius=12)
             tmp_bol._dessiner_sticker_custom(self.ecran, bx_s + CARD_SW // 2, by_s + 50, 22, stk_info["id"], now)
             nom_stk = self.fonte_petite.render(stk_info["nom"], True, BLANC)
             self.ecran.blit(nom_stk, nom_stk.get_rect(center=(bx_s + CARD_SW // 2, by_s + 85)))
+            # Badge exclusif
+            if is_excl:
+                excl_surf = self.fonte_petite.render("★ EXCLUSIF", True, (200, 100, 255))
+                self.ecran.blit(excl_surf, excl_surf.get_rect(center=(bx_s + CARD_SW // 2, by_s + 100)))
             btn_stk = pygame.Rect(bx_s + 18, by_s + CARD_SH - 40, CARD_SW - 36, 30)
             if achete_s:
                 pygame.draw.rect(self.ecran, VERT, btn_stk, border_radius=7)
                 pygame.draw.rect(self.ecran, BLANC, btn_stk, 1, border_radius=7)
                 lbl_b = self.fonte_petite.render("Mettre sur le bol", True, NOIR)
             else:
-                peut_s = self.boutique["pieces"] >= stk_info["prix"]
-                bg_b = (100, 70, 0) if peut_s else (50, 50, 50)
-                pygame.draw.rect(self.ecran, bg_b, btn_stk, border_radius=7)
-                pygame.draw.rect(self.ecran, OR if peut_s else GRIS, btn_stk, 1, border_radius=7)
-                lbl_b = self.fonte_petite.render(f"Acheter {stk_info['prix']}p", True, OR if peut_s else GRIS)
+                box_only_s = stk_info.get("box_only", False)
+                if box_only_s:
+                    pygame.draw.rect(self.ecran, (60, 40, 90), btn_stk, border_radius=7)
+                    pygame.draw.rect(self.ecran, VIOLET, btn_stk, 1, border_radius=7)
+                    lbl_b = self.fonte_petite.render("Boite/Pass", True, (200, 150, 255))
+                else:
+                    peut_s = self.boutique["pieces"] >= stk_info["prix"]
+                    bg_b = (100, 70, 0) if peut_s else (50, 50, 50)
+                    pygame.draw.rect(self.ecran, bg_b, btn_stk, border_radius=7)
+                    pygame.draw.rect(self.ecran, OR if peut_s else GRIS, btn_stk, 1, border_radius=7)
+                    lbl_b = self.fonte_petite.render(f"Acheter {stk_info['prix']}p", True, OR if peut_s else GRIS)
             self.ecran.blit(lbl_b, lbl_b.get_rect(center=btn_stk.center))
 
         # ── Bouton retour ─────────────────────────────────────────────────────
@@ -4610,7 +4766,7 @@ class JeuPetitDej:
                             slots_ev[self._perso_slot_actif] = sid
                             self.boutique["stickers_slots"] = slots_ev
                             self._sauvegarder_boutique()
-                        elif self.boutique["pieces"] >= stk_info2["prix"]:
+                        elif not stk_info2.get("box_only", False) and self.boutique["pieces"] >= stk_info2["prix"]:
                             self.boutique["pieces"] -= stk_info2["prix"]
                             stickers_achetes_ev.append(sid)
                             self.boutique["stickers_achetes"] = stickers_achetes_ev
