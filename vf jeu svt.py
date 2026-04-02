@@ -1,3 +1,4 @@
+# Créé par BRAS Arthur, le 02/04/2026 en Python 3.7
 # Créé par BRAS Arthur, le 31/03/2026 en Python 3.7
 # Créé par BRAS Arthur, le 30/03/2026 en Python 3.7
 # Créé par BRAS Arthur, le 30/03/2026 en Python 3.7
@@ -47,7 +48,7 @@ PASS_TIERS = [
     {"tier":  2, "xp_cumul":   250, "free": ("boite", "boite_normale"), "premium": ("pieces",  200)},
     {"tier":  3, "xp_cumul":   600, "free": ("pieces", 100),            "premium": ("skin", "cosmos")},
     {"tier":  4, "xp_cumul":  1050, "free": ("pieces", 125),            "premium": ("boite", "grande_boite")},
-    {"tier":  5, "xp_cumul":  1600, "free": ("skin", "cosmos"),         "premium": ("pieces",  400)},
+    {"tier":  5, "xp_cumul":  1600, "free": ("pieces", 300),            "premium": ("pieces",  400)},
     {"tier":  6, "xp_cumul":  2250, "free": ("boite", "boite_normale"), "premium": ("pieces",  450)},
     {"tier":  7, "xp_cumul":  3000, "free": ("pieces", 175),            "premium": ("boite", "grande_boite")},
     {"tier":  8, "xp_cumul":  3850, "free": ("pieces", 200),            "premium": ("skin", "plasma")},
@@ -1521,14 +1522,14 @@ class JeuPetitDej:
 
     # -- Difficulte progressive (style Subway Surfers) ----------------------
     VITESSE_DEPART    = 2.5    # vitesse douce au depart
-    VITESSE_MAX       = 10.0   # plafond raisonnable
-    VITESSE_INCREMENT = 0.20   # progression plus lente toutes les 10 s
-    SPAWN_DEPART      = 1600   # ms entre chaque spawn au depart (plus espace)
-    SPAWN_MIN         = 450    # spawn max moins frenetique
-    SPAWN_INCREMENT   = 55     # reduction plus douce
+    VITESSE_MAX       = 13.0   # plafond plus eleve
+    VITESSE_INCREMENT = 0.40   # progression 2x plus rapide toutes les 10 s
+    SPAWN_DEPART      = 1200   # ms entre chaque spawn au depart
+    SPAWN_MIN         = 300    # spawn max plus frenetique
+    SPAWN_INCREMENT   = 80     # reduction plus agressive
     RATIO_PIEGES_DEPART = 0.0  # pas de pieges les premieres secondes
-    RATIO_PIEGES_MAX    = 0.50 # maximum 50% de pieges
-    RATIO_PIEGES_PALIER = 30   # pieges arrivent progressivement
+    RATIO_PIEGES_MAX    = 0.60 # maximum 60% de pieges
+    RATIO_PIEGES_PALIER = 15   # pieges arrivent 2x plus vite
 
     TYPES_BONS = [
         {"nom": "Oeuf",         "energie": 25, "sante": 30, "poids": 3},
@@ -1657,9 +1658,9 @@ class JeuPetitDej:
 
     def _niveau_label(self):
         t = self._temps_ecoule()
-        if t < 10:   return "DEBUTANT",  VERT
-        if t < 30:   return "INTERMEDIAIRE", ORANGE
-        if t < 60:   return "EXPERT",    ROUGE
+        if t < 8:    return "DEBUTANT",  VERT
+        if t < 20:   return "INTERMEDIAIRE", ORANGE
+        if t < 40:   return "EXPERT",    ROUGE
         return "CHAOS !", ROUGE_FLUO
 
     # -- Spawn -------------------------------------------------------------
@@ -4124,18 +4125,87 @@ class JeuPetitDej:
             pygame.draw.circle(ecran, (255, 255, 200), (cx - 5, ry_c + 29), r_ico // 3)
             surf_v = self.fonte_sous_titre.render(str(reward[1]), True, OR if not deja_recue else VERT)
             ecran.blit(surf_v, surf_v.get_rect(center=(cx, ry_c + 60)))
+        elif reward[0] == "boite":
+            # Même visuel que l'écran boites, taille réduite
+            boite_info = next((b for b in BOITES_CATALOGUE if b["id"] == reward[1]), None)
+            if boite_info:
+                self._dessiner_boite_visuel(ecran, cx, ry_c + 34, boite_info, taille=44)
+                nom_boite = boite_info["nom"]
+            else:
+                nom_boite = reward[1]
+            surf_n = self.fonte_petite.render(nom_boite, True,
+                                              boite_info["bord"] if (boite_info and not deja_recue) else VERT)
+            ecran.blit(surf_n, surf_n.get_rect(center=(cx, ry_c + 60)))
         else:
-            skin_info = Bol.SKINS.get(reward[1], {})
-            coul_skin = skin_info.get("couleur", GRIS)
-            coul_f = tuple(max(0, int(c * 0.65)) for c in coul_skin)
-            rx_b, ry_b = 28, 16
-            bx_b, by_b = cx, ry_c + 34
-            pygame.draw.ellipse(ecran, coul_f,   (bx_b - rx_b, by_b - ry_b, rx_b*2, ry_b*2 + 6))
-            pygame.draw.ellipse(ecran, coul_skin, (bx_b - rx_b + 2, by_b - ry_b + 2, rx_b*2 - 4, ry_b*2 + 2))
-            pygame.draw.ellipse(ecran, tuple(min(255, c+50) for c in coul_skin),
-                                (bx_b - rx_b, by_b - ry_b - 6, rx_b*2, 12))
-            nom_s = skin_info.get("nom", reward[1])
-            surf_n = self.fonte_petite.render(nom_s, True, coul_skin if not deja_recue else VERT)
+            # Skin / bol — même rendu que la boutique, échelle réduite
+            skin_info  = Bol.SKINS.get(reward[1], {})
+            coul       = skin_info.get("couleur", GRIS)
+            coul_f     = tuple(max(0,   int(c * 0.65))       for c in coul)
+            coul_l     = tuple(min(255, int(c * 1.25 + 20))  for c in coul)
+            forme      = skin_info.get("forme",   "classic")
+            sticker    = skin_info.get("sticker", None)
+            r_cercle   = 20           # rayon réduit (boutique utilise 28)
+            pcx, pcy   = cx, ry_c + 32
+
+            if forme == "carre":
+                rw, rh = r_cercle + 6, r_cercle + 2
+                pts_c = [
+                    (pcx - rw, pcy - rh // 2),
+                    (pcx + rw, pcy - rh // 2),
+                    (pcx + rw, pcy + rh // 2),
+                    (pcx + rw - 6, pcy + rh),
+                    (pcx - rw + 6, pcy + rh),
+                    (pcx - rw, pcy + rh // 2),
+                ]
+                pygame.draw.polygon(ecran, coul,  pts_c)
+                pygame.draw.polygon(ecran, coul_f, pts_c, 2)
+                pygame.draw.ellipse(ecran, coul_l,
+                                    (pcx - rw + 3, pcy - rh // 2 - 3, rw * 2 - 6, 8))
+            elif forme == "large":
+                rw, rh = r_cercle + 10, r_cercle - 6
+                pygame.draw.ellipse(ecran, coul_f, (pcx - rw - 2, pcy - rh + 2, (rw + 2) * 2, rh * 2 + 4))
+                pygame.draw.ellipse(ecran, coul,   (pcx - rw,     pcy - rh,     rw * 2,       rh * 2))
+                pygame.draw.ellipse(ecran, coul_l, (pcx - rw + 5, pcy - rh + 3, rw * 2 - 10,  rh - 3))
+                pygame.draw.ellipse(ecran, coul_f, (pcx - rw,     pcy - rh,     rw * 2,       rh * 2), 2)
+            elif forme == "profond":
+                rw, rh = r_cercle - 6, r_cercle + 10
+                pygame.draw.ellipse(ecran, coul_f, (pcx - rw - 2, pcy - rh // 2 + 2, (rw + 2) * 2, rh * 2 + 4))
+                pygame.draw.ellipse(ecran, coul,   (pcx - rw,     pcy - rh // 2,     rw * 2,       rh * 2))
+                pygame.draw.ellipse(ecran, coul_l, (pcx - rw + 3, pcy - rh // 2 + 3, rw * 2 - 6,   rh - 3))
+                pygame.draw.ellipse(ecran, coul_f, (pcx - rw,     pcy - rh // 2,     rw * 2,       rh * 2), 2)
+            elif forme == "hexagonal":
+                hex_pts = []
+                for ki in range(6):
+                    a = _m.radians(ki * 60 - 30)
+                    hex_pts.append((int(pcx + _m.cos(a) * (r_cercle + 2)),
+                                    int(pcy + _m.sin(a) * (r_cercle - 2))))
+                pygame.draw.polygon(ecran, coul,  hex_pts)
+                pygame.draw.polygon(ecran, coul_l, hex_pts[0:3])
+                pygame.draw.polygon(ecran, coul_f, hex_pts, 2)
+            else:  # classic
+                pygame.draw.circle(ecran, coul_f, (pcx, pcy), r_cercle + 3)
+                pygame.draw.circle(ecran, coul,   (pcx, pcy), r_cercle)
+                pygame.draw.circle(ecran, coul_l, (pcx, pcy), r_cercle - 6)
+                pygame.draw.ellipse(ecran, tuple(min(255, c + 80) for c in coul),
+                                    (pcx - 10, pcy - 14, 14, 9))
+                pygame.draw.circle(ecran, coul_f, (pcx, pcy), r_cercle, 2)
+
+            # Mini stickers (même logique que la boutique)
+            if sticker == "etoiles":
+                for sk in [(-9, -3), (7, 0), (0, 9)]:
+                    pygame.draw.circle(ecran, (255, 230, 0), (pcx + sk[0], pcy + sk[1]), 3)
+            elif sticker == "coeurs":
+                pygame.draw.circle(ecran, (255, 80, 150), (pcx - 5, pcy + 3), 3)
+                pygame.draw.circle(ecran, (255, 80, 150), (pcx + 5, pcy + 3), 3)
+            elif sticker == "feu":
+                pygame.draw.polygon(ecran, (255, 140, 0),
+                                    [(pcx - 3, pcy - 1), (pcx, pcy - 9), (pcx + 3, pcy - 1)])
+            elif sticker == "galaxy":
+                for gk, gc in [(-6, (180, 100, 255)), (6, (100, 200, 255)), (0, (255, 200, 100))]:
+                    pygame.draw.circle(ecran, gc, (pcx + gk, pcy + 3), 2)
+
+            nom_s  = skin_info.get("nom", reward[1])
+            surf_n = self.fonte_petite.render(nom_s, True, coul if not deja_recue else VERT)
             ecran.blit(surf_n, surf_n.get_rect(center=(cx, ry_c + 60)))
 
         # Indicateurs état
